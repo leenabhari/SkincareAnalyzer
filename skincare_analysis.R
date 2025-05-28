@@ -25,3 +25,24 @@ ggplot(top_10_ingredients, aes(x = reorder(ingredient_list, n), y = n)) +
   labs(title = "Top 10 Ingredients in Skincare Products",
        x = "Ingredient", y = "Count") +
   theme_minimal()
+
+
+# --- average price for product type ---
+# changing price data type to numeric
+skincare <- skincare %>%
+  mutate(price_num = str_remove(price, "£") %>% as.numeric())
+
+# group by product type and calc avg price
+avg_price_by_type <- skincare %>%
+  group_by(product_type) %>%
+  summarise(avg_price = mean(price_num, na.rm = TRUE)) %>%
+  arrange(desc(avg_price))
+
+# --- visualization of avg price ---
+ggplot(avg_price_by_type, aes(x = reorder(product_type, avg_price), y = avg_price)) +
+  geom_col(fill = "#f9c5d1") +
+  coord_flip() +
+  labs(title = "Average Price by Product Type", 
+       x = "Product Type", y = "Average Price (£)") +
+  theme_minimal()
+       
